@@ -79,7 +79,7 @@ Proyecto universitario desarrollado como parte del curso de desarrollo móvil.
 | 👨‍💻 Juan Roman Cuero Ordoñez | Desarrollador  |
 | 👩‍💻 Heily Alexandra Estupiñan Marulanda | Desarrolladora |
 | 👨‍💻 Pablo Murillo Lemus | Desarrollador  |
-| 👨‍💻 _¿nuevo miembro?_ | Desarrollador  |
+| 👨‍💻 Jazmin Patricia Garcia Herrera | Desarrolladora |
 
 _Construido con ❤️ usando Ionic, Angular y Firebase_
 
