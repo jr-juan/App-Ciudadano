@@ -1,11 +1,14 @@
+// Paul estuvo aquí
+// Este archivo contiene el servicio encargado de la captura y carga de fotos.
+// Su propósito es gestionar almacenamiento, lectura y subida de imágenes.
+// Al exponerlo, tener en cuenta: revisar permisos y manejo de errores al exponer funciones con medios.
+
 import { Injectable } from '@angular/core';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
 import { Platform } from '@ionic/angular';
-
-
 
 @Injectable({
   providedIn: 'root',
@@ -18,21 +21,36 @@ export class PhotoService {
 
   public async loadSaved() {
     // Retrieve cached photo array data
-    const photoList = await Preferences.get({ key: this.PHOTO_STORAGE });
-    this.photos = JSON.parse(photoList.value) || [];
+    try {
+      const photoList = await Preferences.get({ key: this.PHOTO_STORAGE });
+      const storedValue = photoList.value;
+
+      if (storedValue) {
+        const parsed = JSON.parse(storedValue);
+        this.photos = Array.isArray(parsed) ? parsed : [];
+      } else {
+        this.photos = [];
+      }
+    } catch (error) {
+      this.photos = [];
+    }
 
     // If running on the web...
     if (!this.platform.is('hybrid')) {
       // Display the photo by reading into base64 format
-      for (let photo of this.photos) {
-        // Read each saved photo's data from the Filesystem
-        const readFile = await Filesystem.readFile({
-          path: photo.filepath,
-          directory: Directory.Data,
-        });
+      for (const photo of this.photos) {
+        try {
+          // Read each saved photo's data from the Filesystem
+          const readFile = await Filesystem.readFile({
+            path: photo.filepath,
+            directory: Directory.Data,
+          });
 
-        // Web platform only: Load the photo as base64 data
-        photo.webviewPath = `data:image/jpeg;base64,${readFile.data}`;
+          // Web platform only: Load the photo as base64 data
+          photo.webviewPath = `data:image/jpeg;base64,${readFile.data}`;
+        } catch (error) {
+          photo.webviewPath = '';
+        }
       }
     }
   }
@@ -60,7 +78,7 @@ export class PhotoService {
     this.photos.unshift(savedImageFile);
 
     // Cache all photo data for future retrieval
-    Preferences.set({
+    await Preferences.set({
       key: this.PHOTO_STORAGE,
       value: JSON.stringify(this.photos),
     });
@@ -72,7 +90,7 @@ export class PhotoService {
     const base64Data = await this.readAsBase64(photo);
 
     // Write the file to the data directory
-    const fileName = new Date().getTime() + '.jpeg';
+    const fileName = `${new Date().getTime()}.jpeg`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
       data: base64Data,
@@ -91,7 +109,7 @@ export class PhotoService {
       // already loaded into memory
       return {
         filepath: fileName,
-        webviewPath: photo.webPath,
+        webviewPath: photo.webPath || '',
       };
     }
   }
@@ -101,14 +119,20 @@ export class PhotoService {
     // "hybrid" will detect Cordova or Capacitor
     if (this.platform.is('hybrid')) {
       // Read the file into base64 format
+      const path = photo.path || '';
       const file = await Filesystem.readFile({
-        path: photo.path,
+        path,
       });
 
       return file.data;
     } else {
+      const source = photo.webPath || '';
+      if (!source) {
+        throw new Error('No se encontró la ruta de la imagen para convertirla a base64.');
+      }
+
       // Fetch the photo, read as a blob, then convert to base64 format
-      const response = await fetch(photo.webPath!);
+      const response = await fetch(source);
       const blob = await response.blob();
 
       return (await this.convertBlobToBase64(blob)) as string;
@@ -121,25 +145,30 @@ export class PhotoService {
     this.photos.splice(position, 1);
 
     // Update photos array cache by overwriting the existing photo array
-    Preferences.set({
+    await Preferences.set({
       key: this.PHOTO_STORAGE,
       value: JSON.stringify(this.photos),
     });
 
     // delete photo file from filesystem
-    const filename = photo.filepath.substr(photo.filepath.lastIndexOf('/') + 1);
-    await Filesystem.deleteFile({
-      path: filename,
-      directory: Directory.Data,
-    });
+    const filename = photo.filepath.split('/').pop() || photo.filepath;
+
+    try {
+      await Filesystem.deleteFile({
+        path: filename,
+        directory: Directory.Data,
+      });
+    } catch (error) {
+      // Ignore delete errors if the file is already missing.
+    }
   }
 
-  convertBlobToBase64 = (blob: Blob) =>
+  convertBlobToBase64 = (blob: Blob): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onerror = reject;
       reader.onload = () => {
-        resolve(reader.result);
+        resolve(String(reader.result));
       };
       reader.readAsDataURL(blob);
     });

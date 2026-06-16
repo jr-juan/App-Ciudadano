@@ -1,3 +1,8 @@
+// Paul estuvo aquí
+// Este archivo contiene el módulo raíz de Angular que registra la aplicación.
+// Su propósito es inicializar la app, declarar el componente principal y configurar proveedores globales.
+// Al exponerlo, tener en cuenta: integra Ionic y define el RouteReuseStrategy para el comportamiento de rutas.
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';

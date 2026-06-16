@@ -1,3 +1,8 @@
+// Paul estuvo aquí
+// Este archivo contiene la lógica de la pantalla tab1.
+// Su propósito es gestionar la visualización de recorridos o datos relevantes para esa vista.
+// Al exponerlo, tener en cuenta: revisar el flujo de eventos y sus suscripciones al actualizar la pantalla.
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';

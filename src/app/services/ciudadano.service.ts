@@ -1,3 +1,8 @@
+// Paul estuvo aquí
+// Este archivo contiene el servicio principal para datos del ciudadano y recorridos.
+// Su propósito es centralizar peticiones y transformaciones de información para la vista.
+// Al exponerlo, tener en cuenta: su flujo es crítico para la sincronización entre UI y backend.
+
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {

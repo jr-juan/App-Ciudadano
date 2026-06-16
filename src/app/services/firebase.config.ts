@@ -1,14 +1,18 @@
+// Paul estuvo aquí
+// Este archivo contiene la configuración de inicialización de Firebase.
+// Su propósito es conectar la app con servicios remotos y sus credenciales de entorno.
+// Al exponerlo, tener en cuenta: tener cuidado con los valores expuestos y cambios por ambiente.
+
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { environment, environmentFireBase } from 'src/environments/environment';
 import { environmentFireBase as environmentFireBaseProd } from 'src/environments/environment.prod';
 
-const app = initializeApp(
-  environment.production
+const firebaseConfig =
+  environment.production || environmentFireBaseProd.production
     ? environmentFireBaseProd.firebaseConfig
-    : environmentFireBase.firebaseConfig,
-);
+    : environmentFireBase.firebaseConfig;
 
-export const firebaseAuth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+
 export const firebaseDB = getFirestore(app);

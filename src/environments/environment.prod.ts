@@ -1,3 +1,8 @@
+// Paul estuvo aquí
+// Este archivo contiene la configuración específica para producción.
+// Su propósito es definir parámetros con el comportamiento esperado en despliegues reales.
+// Al exponerlo, tener en cuenta: asegurar que endpoints y claves sean correctos antes de publicar.
+
 export const environmentFireBase = {
   production: true,
   firebaseConfig: {

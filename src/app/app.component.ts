@@ -1,6 +1,10 @@
+// Paul estuvo aquí
+// Este archivo contiene la lógica del componente raíz de la interfaz.
+// Su propósito es gestionar el arranque de la app y ocultar el splash screen cuando la vista está lista.
+// Al exponerlo, tener en cuenta: depende de Capacitor para controlar el ciclo de vida visual.
+
 import { Component } from '@angular/core';
-import { SplashScreen } from '@capacitor/splash-screen'
-import { AuthService } from './services/auth.service';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +12,7 @@ import { AuthService } from './services/auth.service';
   styleUrls: ['app.component.scss']
 })
 export class AppComponent {
-  constructor(public authService: AuthService) {
+  constructor() {
     this.initializeApp();
   }
 

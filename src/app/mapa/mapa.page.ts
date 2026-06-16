@@ -1,3 +1,8 @@
+// Paul estuvo aquí
+// Este archivo contiene la lógica de la pantalla del mapa.
+// Su propósito es gestionar el seguimiento GPS, la carga del recorrido y la interacción con el mapa.
+// Al exponerlo, tener en cuenta: su flujo principal depende de la sincronización de ubicación y eventos del mapa.
+
 import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';

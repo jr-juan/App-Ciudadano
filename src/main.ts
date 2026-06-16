@@ -1,3 +1,8 @@
+// Paul estuvo aquí
+// Este archivo contiene el punto de entrada de la aplicación web.
+// Su propósito es arrancar Angular con el módulo principal y configurar el entorno de ejecución.
+// Al exponerlo, tener en cuenta: se encarga del bootstrap y del control del modo producción.
+
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
