@@ -1,0 +1,41 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="volver()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ nombreRuta }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="mapa-content">
+  <div class="mapa-wrapper">
+    <div *ngIf="cargando && !errorMapa" class="overlay-estado">
+      <div class="card-estado">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando mapa del recorrido...</p>
+      </div>
+    </div>
+
+    <div *ngIf="errorMapa" class="overlay-estado">
+      <div class="card-estado card-error">
+        <ion-icon name="map-outline"></ion-icon>
+        <p>{{ errorMapa }}</p>
+        <ion-button (click)="volver()">Volver</ion-button>
+      </div>
+    </div>
+
+    <div #mapContainer class="mapa-contenedor"></div>
+
+    <div class="panel-gps" *ngIf="!cargando && !errorMapa">
+      <strong>{{ posicionActual ? 'Camión en movimiento' : 'Esperando GPS' }}</strong>
+      <p *ngIf="posicionActual">Lat: {{ posicionActual.geometry.coordinates[1] | number:'1.4-4' }} · Lng: {{ posicionActual.geometry.coordinates[0] | number:'1.4-4' }}</p>
+      <p *ngIf="!posicionActual">Aún no llegan posiciones del chofer para este recorrido.</p>
+    </div>
+
+    <button class="btn-centrar" *ngIf="posicionActual && !cargando" (click)="centrarEnVehiculo()">
+      <ion-icon name="locate"></ion-icon>
+    </button>
+  </div>
+</ion-content>

@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Verificar correo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <p>{{ message }}</p>
+  <ion-button expand="block" (click)="resendEmail()" [disabled]="loading">
+    <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
+    {{ loading ? 'Reenviando...' : 'Reenviar correo' }}
+  </ion-button>
+  <ion-text color="danger" *ngIf="errorMessage">
+    <p class="error-message">{{ errorMessage }}</p>
+  </ion-text>
+  <ion-list>
+    <ion-item button routerLink="/auth/login">Volver al login</ion-item>
+  </ion-list>
+</ion-content>

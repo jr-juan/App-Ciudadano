@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Rutas en tiempo real</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Seguimiento ciudadano</ion-card-title>
+      <ion-card-subtitle>Datos compartidos por la app del chofer</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Esta pantalla conecta la app ciudadana con la misma base Firestore que usa la app del chofer para mostrar recorridos disponibles.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="recorridos.length; else sinRecorridos">
+    <ion-item *ngFor="let recorrido of recorridos">
+      <ion-label>
+        <h2>{{ recorrido.rutaNombre }}</h2>
+        <p>Chofer: {{ recorrido.choferId }}</p>
+        <p>Vehículo: {{ recorrido.vehiculoPlaca }} {{ recorrido.vehiculoMarca }} {{ recorrido.vehiculoModelo }}</p>
+        <p>Inicio: {{ recorrido.fechaInicio }}</p>
+      </ion-label>
+      <div slot="end" class="actions">
+        <ion-badge [color]="recorrido.estado === 'finalizado' || recorrido.estado === 'cancelado' ? 'medium' : 'success'">{{ recorrido.estado || 'Activo' }}</ion-badge>
+        <ion-button fill="clear" color="primary" (click)="abrirMapa(recorrido.id)">Ver mapa</ion-button>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #sinRecorridos>
+    <ion-card color="light">
+      <ion-card-content>
+        Aún no hay recorridos disponibles en Firestore. Inicia o revisa un recorrido desde la app del chofer para ver la información aquí.
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+</ion-content>

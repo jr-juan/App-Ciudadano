@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { SplashScreen } from '@capacitor/splash-screen'
+import { AuthService } from './services/auth.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss']
 })
 export class AppComponent {
-  constructor() {
+  constructor(public authService: AuthService) {
     this.initializeApp();
   }
 

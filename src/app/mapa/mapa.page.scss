@@ -1,0 +1,75 @@
+.mapa-content {
+  --background: #eff6ff;
+}
+
+.mapa-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.mapa-contenedor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay-estado {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(239, 246, 255, 0.92);
+}
+
+.card-estado {
+  text-align: center;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.card-error {
+  border-top: 4px solid #ef4444;
+}
+
+.panel-gps {
+  position: absolute;
+  left: 12px;
+  right: 68px;
+  bottom: 16px;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.panel-gps strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #0f172a;
+}
+
+.panel-gps p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.btn-centrar {
+  position: absolute;
+  right: 12px;
+  bottom: 16px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+}
