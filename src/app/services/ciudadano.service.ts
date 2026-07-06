@@ -16,6 +16,11 @@ import {
 } from 'firebase/firestore';
 import { firebaseDB } from './firebase.config';
 
+interface EstadoConexion {
+  online: boolean;
+  motivo?: string;
+}
+
 export interface RecorridoCiudadano {
   id: string;
   choferId: string;
@@ -31,8 +36,32 @@ export interface RecorridoCiudadano {
   providedIn: 'root',
 })
 export class CiudadanoService {
+  private ultimoEstadoConexion: EstadoConexion = { online: navigator.onLine };
+
   obtenerRecorridoPorId(id: string): Promise<RecorridoCiudadano | null> {
     return this.leerRecorrido(id);
+  }
+
+  observarEstadoConexion(): Observable<EstadoConexion> {
+    return new Observable((observer) => {
+      const actualizar = () => {
+        const estado: EstadoConexion = {
+          online: navigator.onLine,
+          motivo: navigator.onLine ? 'Conexión disponible' : 'Sin conexión',
+        };
+        this.ultimoEstadoConexion = estado;
+        observer.next(estado);
+      };
+
+      actualizar();
+      window.addEventListener('online', actualizar);
+      window.addEventListener('offline', actualizar);
+
+      return () => {
+        window.removeEventListener('online', actualizar);
+        window.removeEventListener('offline', actualizar);
+      };
+    });
   }
 
   obtenerPosicionesPorRecorrido(recorridoId: string): Observable<any[]> {
@@ -72,55 +101,81 @@ export class CiudadanoService {
 
   obtenerRecorridosActivos(): Observable<RecorridoCiudadano[]> {
     return new Observable((observer) => {
-      const recorridosRef = collection(firebaseDB, 'recorridos');
-      const q = query(recorridosRef);
+      let unsubscribe: (() => void) | undefined;
+      let refreshTimer: number | undefined;
 
-      const unsubscribe = onSnapshot(
-        q,
-        async (snapshot) => {
-          const recorridos = (await Promise.all(
-            snapshot.docs.map(async (item) => {
-              const data = item.data() as DocumentData;
-              const ruta = data.rutaId
-                ? await this.leerDocumento('rutas', data.rutaId)
-                : null;
-              const vehiculo = data.vehiculoId
-                ? await this.leerDocumento('vehiculos', data.vehiculoId)
-                : null;
+      const cargarRecorridos = () => {
+        const recorridosRef = collection(firebaseDB, 'recorridos');
+        const q = query(recorridosRef);
 
-              const estado = String(data.estado ?? '').toLowerCase();
-              if (['finalizado', 'finalizada', 'cancelado', 'cancelada'].includes(estado)) {
-                return null;
-              }
+        unsubscribe?.();
 
-              return {
-                id: item.id,
-                choferId: data.choferId ?? 'Sin chofer',
-                estado: data.estado ?? 'activo',
-                fechaInicio: data.fechaInicio?.toDate?.()
-                  ? data.fechaInicio.toDate().toLocaleString('es-CO')
-                  : 'Sin fecha',
-                rutaNombre: ruta?.nombre_ruta ?? 'Ruta no disponible',
-                vehiculoPlaca: vehiculo?.placa ?? 'Sin vehículo',
-                vehiculoMarca: vehiculo?.marca ?? '',
-                vehiculoModelo: vehiculo?.modelo ?? '',
-              } as RecorridoCiudadano;
-            }),
-          )).filter(Boolean) as RecorridoCiudadano[];
+        unsubscribe = onSnapshot(
+          q,
+          async (snapshot) => {
+            const recorridos = (await Promise.all(
+              snapshot.docs.map(async (item) => {
+                const data = item.data() as DocumentData;
+                const ruta = data.rutaId
+                  ? await this.leerDocumento('rutas', data.rutaId)
+                  : null;
+                const vehiculo = data.vehiculoId
+                  ? await this.leerDocumento('vehiculos', data.vehiculoId)
+                  : null;
 
-          observer.next(recorridos);
-        },
-        (error) => {
-          if ((error as any)?.code === 'permission-denied') {
-            observer.next([]);
-            observer.complete();
-            return;
-          }
-          observer.error(error);
-        },
-      );
+                const estado = String(data.estado ?? '').toLowerCase();
+                if (['finalizado', 'finalizada', 'cancelado', 'cancelada'].includes(estado)) {
+                  return null;
+                }
 
-      return () => unsubscribe();
+                return {
+                  id: item.id,
+                  choferId: data.choferId ?? 'Sin chofer',
+                  estado: data.estado ?? 'activo',
+                  fechaInicio: data.fechaInicio?.toDate?.()
+                    ? data.fechaInicio.toDate().toLocaleString('es-CO')
+                    : 'Sin fecha',
+                  rutaNombre: ruta?.nombre_ruta ?? 'Ruta no disponible',
+                  vehiculoPlaca: vehiculo?.placa ?? 'Sin vehículo',
+                  vehiculoMarca: vehiculo?.marca ?? '',
+                  vehiculoModelo: vehiculo?.modelo ?? '',
+                } as RecorridoCiudadano;
+              }),
+            )).filter(Boolean) as RecorridoCiudadano[];
+
+            observer.next(recorridos);
+          },
+          (error) => {
+            if ((error as any)?.code === 'permission-denied') {
+              observer.next([]);
+              observer.complete();
+              return;
+            }
+            observer.error(error);
+          },
+        );
+      };
+
+      cargarRecorridos();
+
+      const refrescar = () => {
+        if (this.ultimoEstadoConexion.online) {
+          cargarRecorridos();
+        }
+      };
+
+      refreshTimer = window.setInterval(refrescar, 30000);
+      window.addEventListener('online', refrescar);
+      window.addEventListener('offline', refrescar);
+
+      return () => {
+        if (refreshTimer) {
+          window.clearInterval(refreshTimer);
+        }
+        window.removeEventListener('online', refrescar);
+        window.removeEventListener('offline', refrescar);
+        unsubscribe?.();
+      };
     });
   }
 

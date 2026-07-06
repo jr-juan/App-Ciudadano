@@ -57,12 +57,14 @@ git clone https://github.com/jr-juan/App-Ciudadano.git
 # Entrar al proyecto
 cd App-Ciudadano
 
-# Instalar dependencias
+# Instalar dependencias (compatible con este proyecto)
 npm install
 
 # Ejecutar en el navegador
-ionic serve
+npm start
 ```
+
+> Para equipos que trabajen en este repositorio, la configuración incluida en .npmrc ayuda a evitar problemas de dependencias durante la instalación.
 
 ---
 

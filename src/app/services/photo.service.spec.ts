@@ -1,7 +1,9 @@
 // Paul estuvo aquí
-// Este archivo contiene las pruebas del servicio de fotos.
+// En este archivo contiene las pruebas del servicio de fotos.
 // Su propósito es validar el comportamiento esperado del manejo de imágenes.
 // Al exponerlo, tener en cuenta: evitar depender de mocks complejos si el flujo real es fácil de verificar.
+
+/// <reference types="jasmine" />
 
 import { TestBed } from '@angular/core/testing';
 import { Platform } from '@ionic/angular';

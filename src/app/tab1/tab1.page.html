@@ -29,6 +29,21 @@
     </ion-card-content>
   </ion-card>
 
+  <ion-card *ngIf="cargando" color="light">
+    <ion-card-content>
+      Cargando recorridos activos...
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="!cargando" color="light">
+    <ion-card-content>
+      <p>{{ estadoMensaje }}</p>
+      <p *ngIf="ultimaActualizacion" class="ion-margin-top">
+        <small>Última actualización: {{ ultimaActualizacion }}</small>
+      </p>
+    </ion-card-content>
+  </ion-card>
+
   <ion-list *ngIf="recorridos.length; else sinRecorridos">
     <ion-item *ngFor="let recorrido of recorridos">
       <ion-label>
@@ -47,7 +62,7 @@
   <ng-template #sinRecorridos>
     <ion-card color="light">
       <ion-card-content>
-        Aún no hay recorridos disponibles en Firestore. Inicia o revisa un recorrido desde la app del chofer para ver la información aquí.
+        {{ estadoMensaje }}
       </ion-card-content>
     </ion-card>
   </ng-template>
