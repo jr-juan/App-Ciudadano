@@ -1,7 +1,3 @@
-// Paul estuvo aquí
-// En este archivo contiene las pruebas del servicio de fotos.
-// Su propósito es validar el comportamiento esperado del manejo de imágenes.
-// Al exponerlo, tener en cuenta: evitar depender de mocks complejos si el flujo real es fácil de verificar.
 
 /// <reference types="jasmine" />
 

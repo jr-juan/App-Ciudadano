@@ -1,7 +1,3 @@
-// Paul estuvo aquí
-// Este archivo contiene las pruebas unitarias del componente raíz.
-// Su propósito es validar el comportamiento básico del componente y su inicialización.
-// Al exponerlo, tener en cuenta: conviene mantener pruebas simples para evitar fragilidad en la UI.
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed, async } from '@angular/core/testing';
@@ -23,7 +19,5 @@ describe('AppComponent', () => {
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   });
-
-  // TODO: add more tests!
 
 });
