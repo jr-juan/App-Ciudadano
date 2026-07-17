@@ -1,4 +1,3 @@
-// Paul estuvo aquí
 // Este archivo contiene el módulo de navegación por pestañas.
 // Su propósito es registrar el componente y rutas que pertenecen al flujo de tabs.
 // Al exponerlo, tener en cuenta: usa lazy-loading y módulos separados para mantener la app organizada.

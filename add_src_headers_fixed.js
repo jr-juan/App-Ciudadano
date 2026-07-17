@@ -255,7 +255,6 @@ function buildHeader(filePath) {
   const style = getStyle(ext);
   const info = getInfo(filePath);
   const lines = [
-    'Paul estuvo aquí',
     `Este archivo contiene ${info.desc}.`,
     `Su propósito es ${info.purpose}.`,
     `Al exponerlo, tener en cuenta: ${info.note}.`

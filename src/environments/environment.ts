@@ -1,4 +1,3 @@
-// Paul estuvo aquí
 // Este archivo contiene la configuración base para el entorno de desarrollo.
 // Su propósito es proveer valores para pruebas locales y desarrollo.
 // Al exponerlo, tener en cuenta: evitar secretos y usar esta configuración para ajustes locales.
