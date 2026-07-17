@@ -1,4 +1,3 @@
-
 // Este archivo contiene el módulo asociado a la pantalla del mapa.
 // Su propósito es organizar la carga diferida del componente y sus dependencias.
 // Al exponerlo, tener en cuenta: mantener la separación de módulos para evitar acoplamiento innecesario.
