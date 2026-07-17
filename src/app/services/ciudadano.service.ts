@@ -1,3 +1,6 @@
+﻿// Este archivo contiene el servicio principal para datos del ciudadano y recorridos.
+// Su propósito es centralizar peticiones y transformaciones de información para la vista.
+// Al exponerlo, tener en cuenta: su flujo es crítico para la sincronización entre UI y backend.
 
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -45,6 +48,118 @@ export class CiudadanoService {
 
   obtenerRecorridoPorId(id: string): Promise<RecorridoCiudadano | null> {
     return this.leerRecorrido(id);
+  }
+
+  observarRecorrido(recorridoId: string): Observable<RecorridoCiudadano | null> {
+    return new Observable((observer) => {
+      const ref = doc(firebaseDB, 'recorridos', recorridoId);
+      const unsubscribe = onSnapshot(
+        ref,
+        async (snapshot) => {
+          if (!snapshot.exists()) {
+            observer.next(null);
+            return;
+          }
+
+          const data = snapshot.data() as DocumentData;
+          const ruta = data.rutaId ? await this.leerDocumento('rutas', data.rutaId) : null;
+          const vehiculo = data.vehiculoId ? await this.leerDocumento('vehiculos', data.vehiculoId) : null;
+
+          observer.next({
+            id: snapshot.id,
+            choferId: data.choferId ?? 'Sin chofer',
+            estado: data.estado ?? 'activo',
+            fechaInicio: data.fechaInicio?.toDate?.()
+              ? data.fechaInicio.toDate().toLocaleString('es-CO')
+              : 'Sin fecha',
+            rutaNombre: ruta?.nombre_ruta ?? 'Ruta no disponible',
+            vehiculoPlaca: vehiculo?.placa ?? 'Sin vehículo',
+            vehiculoMarca: vehiculo?.marca ?? '',
+            vehiculoModelo: vehiculo?.modelo ?? '',
+          } as RecorridoCiudadano);
+        },
+        (error) => observer.error(error),
+      );
+
+      return () => unsubscribe();
+    });
+  }
+
+  observarRutaDelRecorrido(recorridoId: string): Observable<RutaCiudadana | null> {
+    return new Observable((observer) => {
+      let rutaUnsubscribe: (() => void) | undefined;
+      const limpiarRuta = () => {
+        rutaUnsubscribe?.();
+        rutaUnsubscribe = undefined;
+      };
+
+      const refRecorrido = doc(firebaseDB, 'recorridos', recorridoId);
+      const unsubscribeRecorrido = onSnapshot(
+        refRecorrido,
+        (snapshot) => {
+          if (!snapshot.exists()) {
+            limpiarRuta();
+            observer.next(null);
+            return;
+          }
+
+          const data = snapshot.data() as DocumentData;
+          const rutaId = data.rutaId as string | undefined;
+          const estado = String(data.estado ?? '').trim().toLowerCase();
+          const estadoTerminal = this.esEstadoTerminal(estado);
+
+          if (!rutaId || estadoTerminal) {
+            limpiarRuta();
+            observer.next(null);
+            return;
+          }
+
+          limpiarRuta();
+          const rutaRef = doc(firebaseDB, 'rutas', rutaId);
+          rutaUnsubscribe = onSnapshot(
+            rutaRef,
+            (rutaSnapshot) => {
+              if (!rutaSnapshot.exists()) {
+                observer.next(null);
+                return;
+              }
+
+              const rutaData = rutaSnapshot.data() as DocumentData;
+              const coordenadas = this.extraerCoordenadasDesdeShape(rutaData.shape);
+              observer.next({
+                id: rutaSnapshot.id,
+                nombre_ruta: rutaData.nombre_ruta ?? rutaData.nombre ?? 'Ruta sin nombre',
+                color_hex: rutaData.color_hex ?? '#22c55e',
+                shape: rutaData.shape,
+                coordenadas,
+              } as RutaCiudadana);
+            },
+            (error) => observer.error(error),
+          );
+        },
+        (error) => observer.error(error),
+      );
+
+      return () => {
+        limpiarRuta();
+        unsubscribeRecorrido();
+      };
+    });
+  }
+
+  observarDocumentoChofer(dispositivoId: string): Observable<any> {
+    return new Observable((observer: any) => {
+      const ref = doc(firebaseDB, 'dispositivos', dispositivoId);
+      const unsubscribe = onSnapshot(
+        ref,
+        (snapshot: any) => {
+          console.log('[ciudadano.listener.chofer] snapshot dispositivo', { path: ref.path, exists: snapshot.exists(), data: snapshot.data() });
+          observer.next(snapshot.exists() ? snapshot.data() : null);
+        },
+        (error: any) => observer.error(error),
+      );
+      return () => unsubscribe();
+    });
   }
 
   async obtenerRutaDelRecorrido(recorridoId: string): Promise<RutaCiudadana | null> {
@@ -148,8 +263,8 @@ export class CiudadanoService {
                   ? await this.leerDocumento('vehiculos', data.vehiculoId)
                   : null;
 
-                const estado = String(data.estado ?? '').toLowerCase();
-                if (['finalizado', 'finalizada', 'cancelado', 'cancelada'].includes(estado)) {
+                const estado = String(data.estado ?? '').trim().toLowerCase();
+                if (this.esEstadoTerminal(estado)) {
                   return null;
                 }
 
@@ -215,8 +330,8 @@ export class CiudadanoService {
           const recorridos = (await Promise.all(
             snapshot.docs.map(async (item) => {
               const data = item.data() as DocumentData;
-              const estado = String(data.estado ?? '').toLowerCase();
-              if (!['finalizado', 'finalizada', 'cancelado', 'cancelada'].includes(estado)) {
+              const estado = String(data.estado ?? '').trim().toLowerCase();
+              if (!this.esEstadoTerminal(estado)) {
                 return null;
               }
 
@@ -252,6 +367,11 @@ export class CiudadanoService {
 
       return () => unsubscribe();
     });
+  }
+
+  private esEstadoTerminal(estado: unknown): boolean {
+    const valor = String(estado ?? '').trim().toLowerCase();
+    return ['finalizado', 'finalizada', 'cancelado', 'cancelada'].includes(valor);
   }
 
   private async leerRecorrido(id: string): Promise<RecorridoCiudadano | null> {

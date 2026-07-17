@@ -29,6 +29,17 @@
       <p *ngIf="!posicionActual">Aún no llegan posiciones del chofer para este recorrido.</p>
     </div>
 
+    <button
+      class="btn-actualizar"
+      type="button"
+      *ngIf="recorridoId"
+      (click)="actualizarManualmente()"
+      [attr.aria-label]="actualizandoRuta ? 'Actualizando mapa' : 'Actualizar mapa'"
+    >
+      <ion-spinner *ngIf="actualizandoRuta" name="crescent"></ion-spinner>
+      <ion-icon *ngIf="!actualizandoRuta" name="refresh-outline"></ion-icon>
+    </button>
+
     <button class="btn-centrar" *ngIf="posicionActual && !cargando" (click)="centrarEnVehiculo()">
       <ion-icon name="locate"></ion-icon>
     </button>

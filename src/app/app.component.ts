@@ -1,5 +1,4 @@
-
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { SplashScreen } from '@capacitor/splash-screen';
 
 @Component({
@@ -13,9 +12,6 @@ export class AppComponent {
   }
 
   initializeApp() {
-       for our users, hide the splash screen automatically
-       when the app is ready to be used:
-
     SplashScreen.hide();
   }
 }
