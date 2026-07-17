@@ -1,0 +1,167 @@
+/*
+ * Este archivo contiene los estilos específicos del mapa.
+ * Su propósito es ajustar la apariencia del panel y los overlays del recorrido.
+ * Al exponerlo, tener en cuenta: los estilos pueden influir en la legibilidad y uso del mapa en móviles.
+ */
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.mapa-content {
+  --background: #eff6ff;
+  height: 100%;
+}
+
+.mapa-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+.mapa-contenedor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  z-index: 1;
+}
+
+.overlay-estado {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(239, 246, 255, 0.92);
+}
+
+.card-estado {
+  text-align: center;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.card-error {
+  border-top: 4px solid #ef4444;
+}
+
+.panel-gps {
+  position: absolute;
+  left: 8px;
+  right: 56px;
+  bottom: 8px;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 12px;
+  padding: 8px 10px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+}
+
+.historial-card {
+  position: absolute;
+  right: 8px;
+  left: auto;
+  top: 8px;
+  width: min(220px, calc(100% - 16px));
+  max-width: 220px;
+  z-index: 6;
+  margin: 0;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.14) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  overflow: hidden;
+}
+
+.historial-card ion-card-content {
+  padding: 7px 9px !important;
+}
+
+.historial-card > ion-card-content > strong {
+  display: block;
+  font-size: 0.72rem;
+  color: #0f172a;
+  margin-bottom: 4px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.historial-card ion-list {
+  background: transparent !important;
+  padding: 0 !important;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.historial-card ion-item {
+  --padding-start: 0 !important;
+  --inner-padding-end: 0 !important;
+  --padding-top: 3px !important;
+  --padding-bottom: 3px !important;
+  --background: transparent !important;
+  min-height: 30px;
+  --min-height: 30px;
+}
+
+.historial-card ion-label {
+  margin: 0 !important;
+}
+
+.historial-card ion-label h3 {
+  font-size: 0.7rem !important;
+  margin: 0 !important;
+  color: #0f172a;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.historial-card ion-label p {
+  display: block !important;
+  font-size: 0.58rem !important;
+  margin: 1px 0 0 !important;
+  color: #64748b;
+}
+
+.historial-card ion-badge {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.58rem !important;
+  padding: 2px 6px !important;
+  border-radius: 999px !important;
+  --background: #dcfce7 !important;
+  --color: #166534 !important;
+}
+
+.panel-gps strong {
+  display: block;
+  font-size: 0.8rem;
+  color: #0f172a;
+}
+
+.panel-gps p {
+  margin: 2px 0 0;
+  font-size: 0.72rem;
+  color: #475569;
+}
+
+.btn-centrar {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+  z-index: 5;
+}

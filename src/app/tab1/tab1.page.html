@@ -1,0 +1,63 @@
+<!--
+  Paul estuvo aquí
+  Este archivo contiene la plantilla de la pantalla tab1.
+  Su propósito es mostrar la información correspondiente a la sección principal.
+  Al exponerlo, tener en cuenta: la estructura HTML debe mantenerse alineada con el estado y la navegación.
+-->
+
+<!--
+  Paul estuvo aqu�
+  Este archivo contiene la plantilla de la pantalla tab1.
+  Su prop�sito es mostrar la informaci�n que corresponde a la secci�n principal de la app.
+  Al exponerlo, tener en cuenta: la estructura HTML debe mantenerse alineada con el estado y la navegaci�n.
+-->
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Seguimiento ciudadano</ion-card-title>
+      <ion-card-subtitle>Datos compartidos por la app del chofer</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Esta pantalla conecta la app ciudadana con la misma base Firestore que usa la app del chofer para mostrar recorridos disponibles.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="cargando" color="light">
+    <ion-card-content>
+      Cargando recorridos activos...
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="!cargando" color="light">
+    <ion-card-content>
+      <p>{{ estadoMensaje }}</p>
+      <p *ngIf="ultimaActualizacion" class="ion-margin-top">
+        <small>Última actualización: {{ ultimaActualizacion }}</small>
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="recorridos.length; else sinRecorridos">
+    <ion-item *ngFor="let recorrido of recorridos">
+      <ion-label>
+        <h2>{{ recorrido.rutaNombre }}</h2>
+        <p>Chofer: {{ recorrido.choferId }}</p>
+        <p>Vehículo: {{ recorrido.vehiculoPlaca }} {{ recorrido.vehiculoMarca }} {{ recorrido.vehiculoModelo }}</p>
+        <p>Inicio: {{ recorrido.fechaInicio }}</p>
+      </ion-label>
+      <div slot="end" class="actions">
+        <ion-badge [color]="recorrido.estado === 'finalizado' || recorrido.estado === 'cancelado' ? 'medium' : 'success'">{{ recorrido.estado || 'Activo' }}</ion-badge>
+        <ion-button fill="clear" color="primary" (click)="abrirMapa(recorrido.id)">Ver mapa</ion-button>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #sinRecorridos>
+    <ion-card color="light">
+      <ion-card-content>
+        {{ estadoMensaje }}
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+</ion-content>

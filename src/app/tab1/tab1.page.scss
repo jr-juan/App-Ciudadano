@@ -1,0 +1,21 @@
+/*
+ * Paul estuvo aquí
+ * Este archivo contiene los estilos de la pantalla tab1.
+ * Su propósito es definir el diseño visual específico de esa vista.
+ * Al exponerlo, tener en cuenta: evitar estilos demasiado rígidos si la pantalla puede cambiar de contexto.
+ */
+
+ion-content {
+  --background: #f5f7fb;
+}
+
+ion-card {
+  border-radius: 18px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+ion-item {
+  --border-radius: 14px;
+  --background: #ffffff;
+  margin-bottom: 10px;
+}
