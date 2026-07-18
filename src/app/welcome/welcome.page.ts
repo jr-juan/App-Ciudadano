@@ -14,7 +14,7 @@ export class WelcomePage implements OnDestroy {
     this.timeoutId = setTimeout(() => {
       this.isLeaving = true;
       setTimeout(() => {
-        this.router.navigate(['/mapa'], { replaceUrl: true });
+        this.router.navigate(['/home'], { replaceUrl: true });
       }, 220);
     }, 4000);
   }

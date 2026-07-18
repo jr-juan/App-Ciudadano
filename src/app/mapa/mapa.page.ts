@@ -48,15 +48,16 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
   private rutaEscuchadaId: string | null = null;
   historialRecorridos: RecorridoCiudadano[] = [];
 
-  cargando = true;
+  cargando = false;
   errorMapa = '';
   nombreRuta = 'Ruta ciudadana';
   colorRuta = '#22c55e';
   posicionActual: any = null;
-  etaTexto = 'Calculando ETA...';
+  etaTexto = 'Esperando recorrido';
   recorridoSeleccionado: RecorridoCiudadano | null = null;
   recorridosActivos: RecorridoCiudadano[] = [];
   actualizandoRuta = false;
+  mensajeEstado = 'Esperando recorrido';
 
   constructor(
     private route: ActivatedRoute,
@@ -69,34 +70,26 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
 
   async ngOnInit() {
     this.recorridoId = this.route.snapshot.paramMap.get('recorridoId') || '';
-    this.subsRecorridos = this.ciudadanoService.obtenerRecorridosActivos().subscribe((recorridos) => {
-      this.ngZone.run(() => {
-        this.recorridosActivos = recorridos;
-        if (!this.recorridoId && recorridos.length) {
-          this.seleccionarRecorrido(recorridos[0]);
-        }
-      });
-    });
+    this.suscribirRecorridosActivos();
 
-    if (!this.recorridoId) {
-      this.cargando = true;
-      this.errorMapa = '';
-      return;
+    if (this.recorridoId) {
+      this.suscribirRecorridoActivo();
     }
-
-    this.suscribirRecorridoActivo();
   }
 
   ngAfterViewInit() {
-    if (!this.errorMapa) {
-      this.inicializarMapa();
-    }
+    this.inicializarMapa();
     if (this.recorridoId) {
+      this.suscribirRecorridoActivo();
       this.suscribirRuta();
     }
   }
 
   seleccionarRecorrido(recorrido: RecorridoCiudadano) {
+    if (this.recorridoSeleccionado?.id === recorrido.id && this.recorridoId === recorrido.id) {
+      return;
+    }
+
     this.subsRecorrido?.unsubscribe();
     this.recorridoId = recorrido.id;
     const recorridoConRuta = recorrido as RecorridoCiudadano & { rutaId?: string };
@@ -107,8 +100,9 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
     });
     this.recorridoSeleccionado = recorrido;
     this.nombreRuta = recorrido.rutaNombre || 'Ruta ciudadana';
-    this.cargando = true;
+    this.cargando = false;
     this.errorMapa = '';
+    this.mensajeEstado = '';
     this.etaTexto = 'Calculando ETA...';
     this.rutaVistaInicial = false;
     this.rutaHash = '';
@@ -120,6 +114,7 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
     this.subsRuta?.unsubscribe();
     this.subsRuta = undefined;
     this.limpiarPolylineMapa();
+    this.limpiarMarcadorMapa();
     this.cargarPosiciones();
     this.suscribirRuta();
     this.suscribirRecorridoActivo();
@@ -148,11 +143,11 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
 
   private inicializarMapa() {
     this.ngZone.run(() => {
-      this.cargando = true;
+      this.cargando = false;
       this.errorMapa = '';
+      this.mensajeEstado = 'Esperando recorrido';
     });
     this.crearMapaPorDefecto();
-    this.cargarPosiciones();
   }
 
   private crearMapaPorDefecto() {
@@ -170,10 +165,44 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
       maxZoom: 19,
     }).addTo(this.map);
 
+    setTimeout(() => {
+      this.map?.invalidateSize();
+    }, 300);
+
     this.map.whenReady(() => {
       setTimeout(() => {
         this.map?.invalidateSize();
       }, 300);
+    });
+  }
+
+  private suscribirRecorridosActivos() {
+    this.subsRecorridos?.unsubscribe();
+    this.subsRecorridos = this.ciudadanoService.obtenerRecorridosActivos().subscribe({
+      next: (recorridos) => {
+        this.ngZone.run(() => {
+          this.recorridosActivos = recorridos;
+          if (!recorridos.length) {
+            this.reiniciarVistaSinRecorrido();
+            return;
+          }
+
+          const recorridoActivo = recorridos.find((recorrido) => recorrido.id === this.recorridoId) ?? recorridos[0];
+          if (!recorridoActivo) {
+            this.reiniciarVistaSinRecorrido();
+            return;
+          }
+
+          if (this.recorridoSeleccionado?.id === recorridoActivo.id && this.recorridoId === recorridoActivo.id) {
+            return;
+          }
+
+          this.seleccionarRecorrido(recorridoActivo);
+        });
+      },
+      error: (error) => {
+        console.error('No fue posible escuchar los recorridos activos', error);
+      },
     });
   }
 
@@ -194,8 +223,7 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
             estado: recorridoActivo?.estado ?? null,
           });
           if (!recorridoActivo) {
-            this.errorMapa = 'No se encontró el recorrido solicitado.';
-            this.cargando = false;
+            this.reiniciarVistaSinRecorrido();
             return;
           }
 
@@ -203,6 +231,7 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
           this.nombreRuta = recorridoActivo.rutaNombre || 'Ruta ciudadana';
           this.cargando = false;
           this.errorMapa = '';
+          this.mensajeEstado = '';
           this.suscribirRuta();
         });
       },
@@ -299,6 +328,38 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
     this.rutaCargada = false;
   }
 
+  private limpiarMarcadorMapa() {
+    if (this.marcador) {
+      this.marcador.remove();
+    }
+    this.marcador = null;
+  }
+
+  private reiniciarVistaSinRecorrido() {
+    this.recorridoSeleccionado = null;
+    this.recorridoId = '';
+    this.mensajeEstado = 'No hay recorridos activos en este momento.';
+    this.nombreRuta = 'Ruta ciudadana';
+    this.posicionActual = null;
+    this.etaTexto = 'Esperando recorrido';
+    this.ultimaLat = 0;
+    this.ultimaLng = 0;
+    this.cargando = false;
+    this.errorMapa = '';
+    this.limpiarPolylineMapa();
+    this.limpiarMarcadorMapa();
+    this.subscription?.unsubscribe();
+    this.subscription = undefined;
+    this.subsRuta?.unsubscribe();
+    this.subsRuta = undefined;
+    this.subsRecorrido?.unsubscribe();
+    this.subsRecorrido = undefined;
+    this.recorridoIdSuscrito = null;
+    this.rutaEscuchadaId = null;
+    this.rutaActivaId = null;
+    this.rutaCargada = false;
+  }
+
   private reaccionarCambioRuta(ruta: RutaCiudadana | null) {
     const rutaAnteriorId = this.rutaActivaId;
     const rutaActualId = ruta?.id ?? null;
@@ -380,6 +441,15 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
 
   private cargarPosiciones() {
     this.subscription?.unsubscribe();
+    this.subscription = undefined;
+
+    if (!this.recorridoId) {
+      this.posicionActual = null;
+      this.etaTexto = 'Esperando recorrido';
+      this.cargando = false;
+      return;
+    }
+
     this.subscription = this.ciudadanoService.obtenerPosicionesPorRecorrido(this.recorridoId).subscribe({
       next: (posiciones) => {
         this.ngZone.run(() => {
@@ -388,9 +458,11 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
           );
 
           if (!posicionesValidas.length) {
+            this.posicionActual = null;
             this.cargando = false;
-            this.errorMapa = 'Aún no hay coordenadas disponibles para este recorrido.';
-            this.etaTexto = 'Sin datos de ubicación';
+            this.errorMapa = '';
+            this.etaTexto = 'Esperando GPS';
+            this.limpiarMarcadorMapa();
             return;
           }
 
@@ -457,15 +529,19 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
       this.crearMapaPorDefecto();
     }
 
-    const zoomActual = this.map?.getZoom() ?? 15;
-    this.map?.setView([lat, lng], Math.max(zoomActual, 14));
+    if (!this.map) {
+      return;
+    }
+
+    const zoomActual = this.map.getZoom() ?? 15;
+    this.map.setView([lat, lng], Math.max(zoomActual, 14));
 
     if (this.marcador) {
       this.marcador.setLatLng([lat, lng]);
       return;
     }
 
-    this.marcador = L.marker([lat, lng]).addTo(this.map!);
+    this.marcador = L.marker([lat, lng]).addTo(this.map);
     this.marcador.bindPopup('Ubicación del recorrido').openPopup();
   }
 
@@ -510,6 +586,7 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
     this.subsRuta?.unsubscribe();
     this.subsRecorrido?.unsubscribe();
     this.rutaPolyline?.remove();
+    this.limpiarMarcadorMapa();
     this.map?.remove();
   }
 }

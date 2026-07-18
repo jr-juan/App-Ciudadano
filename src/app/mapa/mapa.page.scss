@@ -5,7 +5,7 @@
 }
 
 .mapa-content {
-  --background: #eff6ff;
+  --background: #ffffff;
   height: 100%;
 }
 
@@ -27,24 +27,40 @@
 
 .overlay-estado {
   position: absolute;
-  inset: 0;
-  z-index: 10;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(239, 246, 255, 0.92);
+  pointer-events: none;
+}
+
+.mapa-aviso-flotante {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  max-width: min(92%, 320px);
+  pointer-events: none;
 }
 
 .card-estado {
   text-align: center;
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+}
+
+.card-aviso {
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .card-error {
-  border-top: 4px solid #ef4444;
+  border-top: 2px solid #ef4444;
 }
 
 .panel-gps {
@@ -53,7 +69,7 @@
   right: 56px;
   bottom: 8px;
   z-index: 5;
-  background: rgba(255, 255, 255, 0.96);
+  background: #ffffff;
   border-radius: 12px;
   padding: 8px 10px;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
@@ -70,7 +86,7 @@
   margin: 0;
   border-radius: 12px !important;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.14) !important;
-  background: rgba(255, 255, 255, 0.98) !important;
+  background: #ffffff !important;
   border: 1px solid rgba(15, 23, 42, 0.08) !important;
   overflow: hidden;
 }
