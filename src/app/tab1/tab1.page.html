@@ -1,52 +1,61 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Recorridos activos</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-  Su prop�sito es mostrar la informaci�n que corresponde a la secci�n principal de la app.
+<ion-content class="tab1-content">
+  <div class="intro-card">
+    <ion-icon name="bus-outline"></ion-icon>
+    <div>
+      <h2>Seguimiento ciudadano</h2>
+      <p>Datos compartidos en tiempo real por la app del chofer.</p>
+    </div>
+  </div>
 
-<ion-content class="ion-padding">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Seguimiento ciudadano</ion-card-title>
-      <ion-card-subtitle>Datos compartidos por la app del chofer</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <p>Esta pantalla conecta la app ciudadana con la misma base Firestore que usa la app del chofer para mostrar recorridos disponibles.</p>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card *ngIf="cargando" color="light">
-    <ion-card-content>
-      Cargando recorridos activos...
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card *ngIf="!cargando" color="light">
-    <ion-card-content>
+  <div class="estado-pill" [class.estado-pill--error]="!cargando && !recorridos.length && estadoMensaje.includes('conexión')">
+    <span class="dot" *ngIf="!cargando"></span>
+    <ion-spinner *ngIf="cargando" name="crescent"></ion-spinner>
+    <div class="estado-texto">
       <p>{{ estadoMensaje }}</p>
-      <p *ngIf="ultimaActualizacion" class="ion-margin-top">
-        <small>Última actualización: {{ ultimaActualizacion }}</small>
-      </p>
-    </ion-card-content>
-  </ion-card>
+      <small *ngIf="ultimaActualizacion">Última actualización: {{ ultimaActualizacion }}</small>
+    </div>
+  </div>
 
-  <ion-list *ngIf="recorridos.length; else sinRecorridos">
-    <ion-item *ngFor="let recorrido of recorridos">
-      <ion-label>
-        <h2>{{ recorrido.rutaNombre }}</h2>
-        <p>Chofer: {{ recorrido.choferId }}</p>
-        <p>Vehículo: {{ recorrido.vehiculoPlaca }} {{ recorrido.vehiculoMarca }} {{ recorrido.vehiculoModelo }}</p>
-        <p>Inicio: {{ recorrido.fechaInicio }}</p>
-      </ion-label>
-      <div slot="end" class="actions">
-        <ion-badge [color]="recorrido.estado === 'finalizado' || recorrido.estado === 'cancelado' ? 'medium' : 'success'">{{ recorrido.estado || 'Activo' }}</ion-badge>
-        <ion-button fill="clear" color="primary" (click)="abrirMapa(recorrido.id)">Ver mapa</ion-button>
+  <div class="recorridos-lista" *ngIf="recorridos.length; else sinRecorridos">
+    <div class="recorrido-card" *ngFor="let recorrido of recorridos">
+      <div class="recorrido-info">
+        <div class="recorrido-header">
+          <h3>{{ recorrido.rutaNombre }}</h3>
+          <ion-badge [color]="recorrido.estado === 'finalizado' || recorrido.estado === 'cancelado' ? 'medium' : 'success'">
+            {{ recorrido.estado || 'Activo' }}
+          </ion-badge>
+        </div>
+        <p class="recorrido-detalle">
+          <ion-icon name="person-outline"></ion-icon>
+          Chofer: {{ recorrido.choferId }}
+        </p>
+        <p class="recorrido-detalle">
+          <ion-icon name="car-outline"></ion-icon>
+          {{ recorrido.vehiculoPlaca }} · {{ recorrido.vehiculoMarca }} {{ recorrido.vehiculoModelo }}
+        </p>
+        <p class="recorrido-detalle">
+          <ion-icon name="time-outline"></ion-icon>
+          Inicio: {{ recorrido.fechaInicio }}
+        </p>
       </div>
-    </ion-item>
-  </ion-list>
+      <button class="btn-ver-mapa" (click)="abrirMapa(recorrido.id)">
+        <ion-icon name="map-outline"></ion-icon>
+        Ver mapa
+      </button>
+    </div>
+  </div>
 
   <ng-template #sinRecorridos>
-    <ion-card color="light">
-      <ion-card-content>
-        {{ estadoMensaje }}
-      </ion-card-content>
-    </ion-card>
+    <div class="estado-vacio" *ngIf="!cargando">
+      <ion-icon name="bus-outline"></ion-icon>
+      <p>{{ estadoMensaje }}</p>
+      <small>Esta pantalla se actualiza sola apenas un chofer inicie un recorrido.</small>
+    </div>
   </ng-template>
 </ion-content>

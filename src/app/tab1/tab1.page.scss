@@ -1,15 +1,222 @@
+:host {
+  --color-primary: #0f766e;
+  --color-accent-blue: #2563eb;
+  --color-accent-purple: #7c3aed;
+  --color-success: #22c55e;
+  --color-success-bg: #dcfce7;
+  --color-success-text: #166534;
+  --color-error: #ef4444;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.10);
+  --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.14);
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-full: 999px;
+}
 
-ion-content {
+.tab1-content {
   --background: #f5f7fb;
+  --padding-top: 14px;
+  --padding-bottom: 24px;
+  --padding-start: 14px;
+  --padding-end: 14px;
 }
 
-ion-card {
-  border-radius: 18px;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+.intro-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 12px;
+
+  ion-icon {
+    font-size: 26px;
+    color: var(--color-primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  h2 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--color-muted);
+    line-height: 1.4;
+  }
 }
 
-ion-item {
-  --border-radius: 14px;
-  --background: #ffffff;
-  margin-bottom: 10px;
+.estado-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-success);
+    box-shadow: 0 0 0 3px var(--color-success-bg);
+    flex-shrink: 0;
+  }
+
+  ion-spinner {
+    width: 16px;
+    height: 16px;
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+
+  .estado-texto {
+    p {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+
+    small {
+      font-size: 0.68rem;
+      color: var(--color-muted);
+    }
+  }
+
+  &--error {
+    border-color: rgba(239, 68, 68, 0.25);
+
+    .dot {
+      background: var(--color-error);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+  }
+}
+
+.recorridos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recorrido-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+.recorrido-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 0.94rem;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+
+  ion-badge {
+    font-size: 0.64rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    text-transform: capitalize;
+    flex-shrink: 0;
+  }
+}
+
+.recorrido-detalle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+
+  ion-icon {
+    font-size: 14px;
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+}
+
+.btn-ver-mapa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent-blue));
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  ion-icon {
+    font-size: 16px;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent-blue);
+    outline-offset: 2px;
+  }
+}
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-muted);
+
+  ion-icon {
+    font-size: 40px;
+    color: var(--color-primary);
+    opacity: 0.5;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin: 0 0 4px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  small {
+    font-size: 0.74rem;
+  }
 }

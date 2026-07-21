@@ -13,31 +13,26 @@
       </div>
     </div>
 
-    <!-- Bloque de prueba: se comenta temporalmente para comprobar si el mensaje flotante es el elemento que tapa el mapa -->
-    <!--
     <div *ngIf="mensajeEstado && !recorridoSeleccionado" class="mapa-aviso-flotante">
       <div class="card-estado card-aviso">
         <ion-icon name="map-outline"></ion-icon>
         <p>{{ mensajeEstado }}</p>
       </div>
     </div>
-    -->
 
     <div id="map" class="mapa-contenedor"></div>
 
     <div class="panel-gps" *ngIf="!errorMapa">
       <strong>{{ posicionActual ? 'Camión en movimiento' : 'Esperando GPS' }}</strong>
       <p *ngIf="posicionActual">ETA: {{ etaTexto }}</p>
-      <p *ngIf="posicionActual">Lat: {{ posicionActual.geometry.coordinates[1] | number:'1.4-4' }} · Lng: {{ posicionActual.geometry.coordinates[0] | number:'1.4-4' }}</p>
-      <p *ngIf="!posicionActual">{{ recorridoSeleccionado ? 'Aún no llegan posiciones del chofer para este recorrido.' : 'El mapa sigue activo y esperará un recorrido nuevo.' }}</p>
+      <p *ngIf="posicionActual">Lat: {{ posicionActual.geometry.coordinates[1] | number:'1.4-4' }} · Lng: {{
+        posicionActual.geometry.coordinates[0] | number:'1.4-4' }}</p>
+      <p *ngIf="!posicionActual">{{ recorridoSeleccionado ? 'Aún no llegan posiciones del chofer para este recorrido.' :
+        'El mapa sigue activo y esperará un recorrido nuevo.' }}</p>
     </div>
 
-    <button
-      class="btn-actualizar"
-      type="button"
-      (click)="actualizarManualmente()"
-      [attr.aria-label]="actualizandoRuta ? 'Actualizando mapa' : 'Actualizar mapa'"
-    >
+    <button class="btn-actualizar" type="button" (click)="actualizarManualmente()"
+      [attr.aria-label]="actualizandoRuta ? 'Actualizando mapa' : 'Actualizar mapa'">
       <ion-spinner *ngIf="actualizandoRuta" name="crescent"></ion-spinner>
       <ion-icon *ngIf="!actualizandoRuta" name="refresh-outline"></ion-icon>
     </button>
