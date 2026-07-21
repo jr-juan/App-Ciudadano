@@ -1,11 +1,34 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>{{ nombreRuta }}</ion-title>
+    <ion-title>Ecoruta Ciudadano</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="mapa-content">
   <div class="mapa-wrapper">
+
+    <div class="cabecera-recorrido" *ngIf="!errorMapa">
+      <div class="ruta-actual" *ngIf="recorridoSeleccionado">
+        <span class="dot-ruta"></span>
+        <h1>{{ nombreRuta }}</h1>
+      </div>
+      <div class="ruta-actual ruta-actual--vacia" *ngIf="!recorridoSeleccionado">
+        <ion-icon name="bus-outline"></ion-icon>
+        <h1>Selecciona un recorrido</h1>
+      </div>
+
+      <div class="selector-recorridos" *ngIf="recorridosActivos.length > 1">
+        <button
+          *ngFor="let recorrido of recorridosActivos"
+          class="chip-recorrido"
+          [class.chip-recorrido--activo]="recorrido.id === recorridoId"
+          (click)="seleccionarRecorrido(recorrido)"
+        >
+          {{ recorrido.rutaNombre || 'Ruta' }}
+        </button>
+      </div>
+    </div>
+
     <div *ngIf="errorMapa" class="overlay-estado">
       <div class="card-estado card-error">
         <ion-icon name="map-outline"></ion-icon>
@@ -23,12 +46,20 @@
     <div id="map" class="mapa-contenedor"></div>
 
     <div class="panel-gps" *ngIf="!errorMapa">
-      <strong>{{ posicionActual ? 'Camión en movimiento' : 'Esperando GPS' }}</strong>
-      <p *ngIf="posicionActual">ETA: {{ etaTexto }}</p>
-      <p *ngIf="posicionActual">Lat: {{ posicionActual.geometry.coordinates[1] | number:'1.4-4' }} · Lng: {{
-        posicionActual.geometry.coordinates[0] | number:'1.4-4' }}</p>
-      <p *ngIf="!posicionActual">{{ recorridoSeleccionado ? 'Aún no llegan posiciones del chofer para este recorrido.' :
-        'El mapa sigue activo y esperará un recorrido nuevo.' }}</p>
+      <span class="gps-dot" [class.gps-dot--esperando]="!posicionActual"></span>
+      <div class="gps-texto">
+        <strong>{{ posicionActual ? 'Camión en movimiento' : 'Esperando GPS' }}</strong>
+
+        <p *ngIf="posicionActual && etaTexto !== 'ETA pendiente' && etaTexto !== 'Calculando ETA...' && etaTexto !== 'Sin datos de ETA'">
+          Llega en {{ etaTexto }}
+        </p>
+        <p *ngIf="posicionActual && (etaTexto === 'ETA pendiente' || etaTexto === 'Calculando ETA...' || etaTexto === 'Sin datos de ETA')">
+          Calculando tiempo de llegada...
+        </p>
+        <p *ngIf="!posicionActual">
+          {{ recorridoSeleccionado ? 'Aún no llegan posiciones del chofer.' : 'Esperando un recorrido activo.' }}
+        </p>
+      </div>
     </div>
 
     <button class="btn-actualizar" type="button" (click)="actualizarManualmente()"

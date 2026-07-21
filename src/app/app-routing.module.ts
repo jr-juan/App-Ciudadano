@@ -1,8 +1,10 @@
-
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+  {
+    path: 'splash',
+    loadChildren: () => import('./splash/splash.module').then(m => m.SplashPageModule),  },
   {
     path: 'mapa',
     loadChildren: () => import('./mapa/mapa.page.module').then((m) => m.MapaPageModule),
@@ -13,12 +15,12 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'mapa',
+    redirectTo: 'splash',
     pathMatch: 'full',
   },
   {
     path: '**',
-    redirectTo: 'mapa',
+    redirectTo: 'splash',
     pathMatch: 'full',
   },
 ];
