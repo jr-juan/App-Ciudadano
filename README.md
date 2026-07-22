@@ -15,6 +15,16 @@ _Aplicación móvil que permite a los ciudadanos rastrear en tiempo real los cam
 
 ---
 
+## 📲 Descargar APK
+
+[![Download APK](https://img.shields.io/badge/Download-APK-success?style=for-the-badge&logo=android&logoColor=white)](https://github.com/jr-juan/App-Ciudadano/releases/latest)
+
+## 🗂️ Tablero de planeación
+
+[![Miro Board](https://img.shields.io/badge/Miro-Ver_tablero-FFD02F?style=for-the-badge&logo=miro&logoColor=black)](https://miro.com/app/board/uXjVGwdDPXY=/)
+
+---
+
 ## 🔗 Ecosistema del proyecto
 
 Este repositorio forma parte de un sistema compuesto por tres aplicaciones que trabajan en conjunto:
