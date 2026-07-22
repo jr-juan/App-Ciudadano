@@ -49,6 +49,7 @@
   flex-direction: column;
   gap: 8px;
   animation: caer-suave 0.25s ease-out;
+  pointer-events: none;
 }
 
 .ruta-actual {
@@ -103,6 +104,7 @@
   overflow-x: auto;
   padding: 2px 2px 4px;
   scrollbar-width: none;
+  pointer-events: auto;
 
   &::-webkit-scrollbar {
     display: none;
@@ -339,4 +341,37 @@
   .gps-dot--esperando {
     animation: none;
   }
+}
+
+// --- Zoom control: centrado verticalmente en el borde derecho ---
+::ng-deep .leaflet-control-zoom {
+  position: absolute !important;
+  top: 50% !important;
+  right: 8px !important;
+  transform: translateY(-50%);
+  margin: 0 !important;
+  box-shadow: var(--shadow-md) !important;
+  border: none !important;
+
+  a {
+    width: 34px !important;
+    height: 34px !important;
+    line-height: 34px !important;
+    color: var(--color-ink) !important;
+  }
+}
+
+// --- Atribución: compacta, esquina inferior izquierda, arriba del panel GPS ---
+::ng-deep .leaflet-control-attribution {
+  font-size: 8.5px !important;
+  line-height: 1.2;
+  opacity: 0.65;
+  background: rgba(255, 255, 255, 0.75) !important;
+  padding: 1px 5px !important;
+  border-radius: 6px;
+  max-width: 46vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 6px 6px !important;
 }

@@ -156,7 +156,7 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.map = L.map('map', {
-      zoomControl: true,
+      zoomControl: false,
       scrollWheelZoom: true,
     }).setView([3.8815, -77.0401], 15);
 
@@ -164,6 +164,8 @@ export class MapaPage implements OnInit, AfterViewInit, OnDestroy {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 19,
     }).addTo(this.map);
+
+     this.map.attributionControl.setPrefix(false); // quita el texto "Leaflet"
 
     setTimeout(() => {
       this.map?.invalidateSize();
