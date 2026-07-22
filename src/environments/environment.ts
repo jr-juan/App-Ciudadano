@@ -1,7 +1,3 @@
-// Paul estuvo aquí
-// Este archivo contiene la configuración base para el entorno de desarrollo.
-// Su propósito es proveer valores para pruebas locales y desarrollo.
-// Al exponerlo, tener en cuenta: evitar secretos y usar esta configuración para ajustes locales.
 
 export const environmentFireBase = {
   production: false,
@@ -30,12 +26,3 @@ export const environment = {
   production: false,
   mapboxToken: ''
 };
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

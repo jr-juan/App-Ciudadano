@@ -171,7 +171,6 @@ const fileDescriptions = {
   'shapes.svg': {
     desc: 'el recurso vectorial utilizado como decoración o iconografía',
     purpose: 'proveer una imagen escalable para la interfaz',
-    note: 'al exponerlo, revisar que el SVG mantenga buena calidad en distintos tamaños'
   }
 };
 
@@ -216,7 +215,6 @@ function removeLeadingCommentBlock(text) {
   }
 
   const block = lines.slice(i, j).join('\n');
-  if (!block.includes('Paul estuvo') && !block.includes('Este archivo contiene')) {
     return text;
   }
 
@@ -255,10 +253,6 @@ function buildHeader(filePath) {
   const style = getStyle(ext);
   const info = getInfo(filePath);
   const lines = [
-    'Paul estuvo aquí',
-    `Este archivo contiene ${info.desc}.`,
-    `Su propósito es ${info.purpose}.`,
-    `Al exponerlo, tener en cuenta: ${info.note}.`
   ];
 
   if (style === 'html') {

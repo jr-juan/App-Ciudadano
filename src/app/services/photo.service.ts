@@ -1,7 +1,3 @@
-// Paul estuvo aquí
-// Este archivo contiene el servicio encargado de la captura y carga de fotos.
-// Su propósito es gestionar almacenamiento, lectura y subida de imágenes.
-// Al exponerlo, tener en cuenta: revisar permisos y manejo de errores al exponer funciones con medios.
 
 import { Injectable } from '@angular/core';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
@@ -56,14 +52,10 @@ export class PhotoService {
   }
 
   /* Use the device camera to take a photo:
-  // https://capacitor.ionicframework.com/docs/apis/camera
 
   // Store the photo data into permanent file storage:
-  // https://capacitor.ionicframework.com/docs/apis/filesystem
 
   // Store a reference to all photo filepaths using Storage API:
-  // https://capacitor.ionicframework.com/docs/apis/storage
-  */
   public async addNewToGallery() {
     // Take a photo
     const capturedPhoto = await Camera.getPhoto({

@@ -1,18 +1,33 @@
-/*
- * Paul estuvo aquí
- * Este archivo contiene los estilos específicos del mapa.
- * Su propósito es ajustar la apariencia del panel y los overlays del recorrido.
- * Al exponerlo, tener en cuenta: los estilos pueden influir en la legibilidad y uso del mapa en móviles.
- */
+:host {
+  display: block;
+  height: 100%;
+
+  --color-primary: #7c3aed;
+  --color-primary-dark: #4f46e5;
+  --color-accent-blue: #2563eb;
+  --color-success: #22c55e;
+  --color-success-bg: #dcfce7;
+  --color-success-text: #166534;
+  --color-error: #ef4444;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-surface: #ffffff;
+  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.10);
+  --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.16);
+  --radius-md: 12px;
+  --radius-full: 999px;
+}
 
 .mapa-content {
-  --background: #eff6ff;
+  --background: #ffffff;
+  height: 100%;
 }
 
 .mapa-wrapper {
   position: relative;
   width: 100%;
   height: 100%;
+  min-height: 100%;
 }
 
 .mapa-contenedor {
@@ -20,63 +35,343 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  min-height: 280px;
+  z-index: 1;
 }
 
-.overlay-estado {
+.cabecera-recorrido {
   position: absolute;
-  inset: 0;
-  z-index: 10;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: caer-suave 0.25s ease-out;
+  pointer-events: none;
+}
+
+.ruta-actual {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+
+  h1 {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  ion-icon {
+    font-size: 18px;
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+}
+
+.dot-ruta {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-success);
+  box-shadow: 0 0 0 3px var(--color-success-bg);
+  flex-shrink: 0;
+}
+
+.ruta-actual--vacia {
+  h1 {
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+}
+
+.selector-recorridos {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 2px 4px;
+  scrollbar-width: none;
+  pointer-events: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.chip-recorrido {
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 7px 14px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &--activo {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: #ffffff;
+    border-color: transparent;
+  }
+}
+
+.overlay-estado,
+.mapa-aviso-flotante {
+  position: absolute;
+  top: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(239, 246, 255, 0.92);
+  pointer-events: none;
+  animation: caer-suave 0.25s ease-out;
+}
+
+.mapa-aviso-flotante {
+  max-width: min(92%, 320px);
+}
+
+@keyframes caer-suave {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 .card-estado {
-  text-align: center;
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  box-shadow: var(--shadow-md);
+
+  ion-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+}
+
+.card-aviso {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+
+  ion-icon {
+    color: var(--color-accent-blue);
+  }
 }
 
 .card-error {
-  border-top: 4px solid #ef4444;
+  border-top: 3px solid var(--color-error);
+
+  ion-icon {
+    color: var(--color-error);
+  }
 }
 
 .panel-gps {
   position: absolute;
-  left: 12px;
-  right: 68px;
-  bottom: 16px;
+  left: 8px;
+  right: 56px;
+  bottom: 8px;
   z-index: 5;
-  background: rgba(255, 255, 255, 0.96);
-  border-radius: 14px;
-  padding: 10px 12px;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-full);
+  padding: 10px 16px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
 }
 
-.panel-gps strong {
-  display: block;
-  font-size: 0.95rem;
-  color: #0f172a;
+.gps-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-success);
+  box-shadow: 0 0 0 3px var(--color-success-bg);
+  flex-shrink: 0;
+
+  &--esperando {
+    background: var(--color-muted);
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.15);
+    animation: pulso 1.4s ease-in-out infinite;
+  }
 }
 
-.panel-gps p {
-  margin: 4px 0 0;
-  font-size: 0.85rem;
-  color: #475569;
+@keyframes pulso {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.gps-texto {
+  min-width: 0;
+
+  strong {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  p {
+    margin: 1px 0 0;
+    font-size: 0.7rem;
+    color: var(--color-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.btn-actualizar,
+.btn-centrar {
+  border: none;
+  border-radius: var(--radius-full);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+}
+
+.btn-actualizar {
+  position: absolute;
+  right: 8px;
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  box-shadow: var(--shadow-md);
+  z-index: 6;
+
+  ion-icon {
+    font-size: 20px;
+  }
+
+  ion-spinner {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .btn-centrar {
   position: absolute;
-  right: 12px;
-  bottom: 16px;
-  width: 48px;
-  height: 48px;
-  border: none;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
-  color: white;
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+  right: 8px;
+  bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--color-accent-blue), var(--color-primary));
+  box-shadow: var(--shadow-sm);
+  z-index: 5;
+
+  ion-icon {
+    font-size: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cabecera-recorrido,
+  .overlay-estado,
+  .mapa-aviso-flotante {
+    animation: none;
+  }
+
+  .btn-actualizar,
+  .btn-centrar,
+  .chip-recorrido {
+    transition: none;
+  }
+
+  .gps-dot--esperando {
+    animation: none;
+  }
+}
+
+// --- Zoom control: centrado verticalmente en el borde derecho ---
+::ng-deep .leaflet-control-zoom {
+  position: absolute !important;
+  top: 50% !important;
+  right: 8px !important;
+  transform: translateY(-50%);
+  margin: 0 !important;
+  box-shadow: var(--shadow-md) !important;
+  border: none !important;
+
+  a {
+    width: 34px !important;
+    height: 34px !important;
+    line-height: 34px !important;
+    color: var(--color-ink) !important;
+  }
+}
+
+// --- Atribución: compacta, esquina inferior izquierda, arriba del panel GPS ---
+::ng-deep .leaflet-control-attribution {
+  font-size: 8.5px !important;
+  line-height: 1.2;
+  opacity: 0.65;
+  background: rgba(255, 255, 255, 0.75) !important;
+  padding: 1px 5px !important;
+  border-radius: 6px;
+  max-width: 46vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 6px 6px !important;
 }

@@ -1,20 +1,33 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-button fill="clear" (click)="volver()">
-        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>{{ nombreRuta }}</ion-title>
+  <ion-toolbar
+    style="--background: linear-gradient(160deg, #6d28d9 0%, #7c3aed 45%, #9333ea 100%); --color: #ffffff;"
+  >
+    <ion-title>Sistema JHJ S.A.S</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="mapa-content">
   <div class="mapa-wrapper">
-    <div *ngIf="cargando && !errorMapa" class="overlay-estado">
-      <div class="card-estado">
-        <ion-spinner name="crescent"></ion-spinner>
-        <p>Cargando mapa del recorrido...</p>
+
+    <div class="cabecera-recorrido" *ngIf="!errorMapa">
+      <div class="ruta-actual" *ngIf="recorridoSeleccionado">
+        <span class="dot-ruta"></span>
+        <h1>{{ nombreRuta }}</h1>
+      </div>
+      <div class="ruta-actual ruta-actual--vacia" *ngIf="!recorridoSeleccionado">
+        <ion-icon name="bus-outline"></ion-icon>
+        <h1>Selecciona un recorrido</h1>
+      </div>
+
+      <div class="selector-recorridos" *ngIf="recorridosActivos.length > 1">
+        <button
+          *ngFor="let recorrido of recorridosActivos"
+          class="chip-recorrido"
+          [class.chip-recorrido--activo]="recorrido.id === recorridoId"
+          (click)="seleccionarRecorrido(recorrido)"
+        >
+          {{ recorrido.rutaNombre || 'Ruta' }}
+        </button>
       </div>
     </div>
 
@@ -22,17 +35,40 @@
       <div class="card-estado card-error">
         <ion-icon name="map-outline"></ion-icon>
         <p>{{ errorMapa }}</p>
-        <ion-button (click)="volver()">Volver</ion-button>
       </div>
     </div>
 
-    <div #mapContainer class="mapa-contenedor"></div>
-
-    <div class="panel-gps" *ngIf="!cargando && !errorMapa">
-      <strong>{{ posicionActual ? 'Camión en movimiento' : 'Esperando GPS' }}</strong>
-      <p *ngIf="posicionActual">Lat: {{ posicionActual.geometry.coordinates[1] | number:'1.4-4' }} · Lng: {{ posicionActual.geometry.coordinates[0] | number:'1.4-4' }}</p>
-      <p *ngIf="!posicionActual">Aún no llegan posiciones del chofer para este recorrido.</p>
+    <div *ngIf="mensajeEstado && !recorridoSeleccionado" class="mapa-aviso-flotante">
+      <div class="card-estado card-aviso">
+        <ion-icon name="map-outline"></ion-icon>
+        <p>{{ mensajeEstado }}</p>
+      </div>
     </div>
+
+    <div id="map" class="mapa-contenedor"></div>
+
+    <div class="panel-gps" *ngIf="!errorMapa">
+      <span class="gps-dot" [class.gps-dot--esperando]="!posicionActual"></span>
+      <div class="gps-texto">
+        <strong>{{ posicionActual ? 'Camión en movimiento' : 'Esperando GPS' }}</strong>
+
+        <p *ngIf="posicionActual && etaTexto !== 'ETA pendiente' && etaTexto !== 'Calculando ETA...' && etaTexto !== 'Sin datos de ETA'">
+          Llega en {{ etaTexto }}
+        </p>
+        <p *ngIf="posicionActual && (etaTexto === 'ETA pendiente' || etaTexto === 'Calculando ETA...' || etaTexto === 'Sin datos de ETA')">
+          Calculando tiempo de llegada...
+        </p>
+        <p *ngIf="!posicionActual">
+          {{ recorridoSeleccionado ? 'Aún no llegan posiciones del chofer.' : 'Esperando un recorrido activo.' }}
+        </p>
+      </div>
+    </div>
+
+    <button class="btn-actualizar" type="button" (click)="actualizarManualmente()"
+      [attr.aria-label]="actualizandoRuta ? 'Actualizando mapa' : 'Actualizar mapa'">
+      <ion-spinner *ngIf="actualizandoRuta" name="crescent"></ion-spinner>
+      <ion-icon *ngIf="!actualizandoRuta" name="refresh-outline"></ion-icon>
+    </button>
 
     <button class="btn-centrar" *ngIf="posicionActual && !cargando" (click)="centrarEnVehiculo()">
       <ion-icon name="locate"></ion-icon>
