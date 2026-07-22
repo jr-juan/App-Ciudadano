@@ -1,12 +1,12 @@
 
 :root {
   /** primary **/
-  --ion-color-primary: #3880ff;
-  --ion-color-primary-rgb: 56, 128, 255;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #3171e0;
-  --ion-color-primary-tint: #4c8dff;
+--ion-color-primary: #7c3aed;
+--ion-color-primary-rgb: 124, 58, 237;
+--ion-color-primary-contrast: #ffffff;
+--ion-color-primary-contrast-rgb: 255, 255, 255;
+--ion-color-primary-shade: #6d2fd4;
+--ion-color-primary-tint: #8a4af1;
 
   /** secondary **/
   --ion-color-secondary: #0cd1e8;
@@ -71,4 +71,10 @@
   --ion-color-light-contrast-rgb: 0, 0, 0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+}
+
+// Header con degradado igual a App Chofer
+ion-toolbar[color="primary"] {
+  --background: linear-gradient(160deg, #6d28d9 0%, #7c3aed 45%, #9333ea 100%) !important;
+  --color: #ffffff !important;
 }
